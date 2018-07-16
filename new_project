@@ -1,6 +1,7 @@
 #!/bin/sh
 cwd=`pwd`
 repo="git@github.com:norbu09/phx_graphql.git"
+npm=yarn
 
 echo "Enter the name of your new project:"
 read name
@@ -25,9 +26,20 @@ while true; do
       cd ${path}/${name}
       rm -rf .git
 
+      echo "+ renaming directories"
+      for k in `find . -name *phx_graphql* -type d`; do
+        file=`echo ${k} | sed "s/phx_graphql/${name}/g"`
+        mv "${k}" "${file}"
+      done
+      echo "+ renaming directories (2nd pass)"
+      for k in `find . -name *phx_graphql* -type d`; do
+        file=`echo ${k} | sed "s/phx_graphql/${name}/g"`
+        mv "${k}" "${file}"
+      done
+
       echo "+ renaming files"
-      for k in `find . -name *phx_graphql*`; do
-        file=`echo ${k} | sed "s/phx_graphql/${name}/"`
+      for k in `find . -name *phx_graphql* -type f`; do
+        file=`echo ${k} | sed "s/phx_graphql/${name}/g"`
         mv "${k}" "${file}"
       done
 
@@ -40,35 +52,31 @@ while true; do
         sed "s/PhxGraphql/${ucfirst}/g" "${j}" > ${tmp} && mv ${tmp} "${j}"
       done
 
-      echo "+ creating release config"
-      mix release.init
-
       echo "+ cleanup"
       rm new_project
 
+      echo "+ fetching elixir dependencies"
+      mix deps.get
+
+      echo "+ fetching js dependencies"
+      cd apps/${name}_web/assets
+      $npm install
+      cd -
+
+      echo "+ creating release config"
+      mix release.init
+
       echo "+ bootstraping git"
       git init
+      mv pre-commit .git/hooks/
       git add .
-      git commit -m "empty react/phoenix project"
+      git commit -m "empty Phoenix + GraphQL project"
 
-      while true; do
-        read -p "want me to fetch dependencies? " yn
-        case $yn in
-          [Nn]* )
-            exit;;
-          [Yy]* )
-            echo "+ fetching elixir dependencies"
-            mix deps.get
-
-            echo "+ fetching js dependencies"
-            npm install
-            break;;
-          * ) echo "Please answer yes or no.";;
-        esac
-      done
-      break;;
+      ;;
     * ) echo "Please answer yes or no.";;
   esac
+
+
   echo "+ try your new project out by running:"
   echo "iex -S mix phx.server"
 done

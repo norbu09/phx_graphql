@@ -22,8 +22,9 @@ defmodule PhxGraphql.Things do
         things
         |> Enum.map(fn x -> Thing.new(x) end)
 
-      {:error, {{:http_status, 404}, _}} -> 
+      {:error, {{:http_status, 404}, _}} ->
         []
+
       error ->
         error
     end
@@ -132,4 +133,3 @@ defmodule PhxGraphql.Things do
     :ok
   end
 end
-

@@ -28,5 +28,4 @@ defmodule PhxGraphqlWeb.Schema do
       resolve(&ThingResolver.create_thing/3)
     end
   end
-  
 end

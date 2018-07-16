@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# run the elixir formatter
+mix format

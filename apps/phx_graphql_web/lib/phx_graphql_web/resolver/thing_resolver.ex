@@ -10,6 +10,7 @@ defmodule PhxGraphqlWeb.ThingResolver do
   def create_thing(_root, args, %{context: %{current_user: user}}) do
     # TODO: add detailed error message handling later
     Logger.debug("User for create: #{user}")
+
     case Things.create_thing(args) do
       {:ok, thing} ->
         {:ok, thing}
@@ -18,6 +19,7 @@ defmodule PhxGraphqlWeb.ThingResolver do
         {:error, "could not create thing"}
     end
   end
+
   def create_thing(_root, _args, _info) do
     {:error, "Access denied"}
   end
@@ -32,4 +34,3 @@ defmodule PhxGraphqlWeb.ThingResolver do
     end
   end
 end
-

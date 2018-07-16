@@ -15,4 +15,3 @@ defmodule PhxGraphql.Things.Thing do
     struct(%__MODULE__{}, rec)
   end
 end
-

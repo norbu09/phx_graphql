@@ -11,8 +11,14 @@ config :phx_graphql_web, PhxGraphqlWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
-                    cd: Path.expand("../assets", __DIR__)]]
+  watchers: [
+    node: [
+      "node_modules/brunch/bin/brunch",
+      "watch",
+      "--stdin",
+      cd: Path.expand("../assets", __DIR__)
+    ]
+  ]
 
 # ## SSL Support
 #
@@ -40,5 +46,3 @@ config :phx_graphql_web, PhxGraphqlWeb.Endpoint,
       ~r{lib/phx_graphql_web/templates/.*(eex)$}
     ]
   ]
-
-
