@@ -72,7 +72,7 @@ while true; do
       git add .
       git commit -m "empty Phoenix + GraphQL project"
 
-      ;;
+      exit;;
     * ) echo "Please answer yes or no.";;
   esac
 
