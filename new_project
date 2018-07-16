@@ -1,0 +1,74 @@
+#!/bin/sh
+cwd=`pwd`
+repo="git@github.com:norbu09/phx_graphql.git"
+
+echo "Enter the name of your new project:"
+read name
+echo "Enter the base path to your projects (like ${HOME}/code):"
+read path
+
+ucfirst=`echo ${name} | awk '{for(i=1;i<=NF;i++){ $i=toupper(substr($i,1,1)) substr($i,2) }}1'`
+
+echo "I will create a new project under ${path}/${name}"
+while true; do
+  read -p "does this look correct? " yn
+  case $yn in
+    [Nn]* )
+      cd ${cwd}
+      exit;;
+    [Yy]* )
+      echo "+ creating directory ${name}"
+      mkdir -p ${path}
+
+      echo "+ bootstrapping directory"
+      git clone --depth=1 ${repo} ${path}/${name}
+      cd ${path}/${name}
+      rm -rf .git
+
+      echo "+ renaming files"
+      for k in `find . -name *phx_graphql*`; do
+        file=`echo ${k} | sed "s/phx_graphql/${name}/"`
+        mv "${k}" "${file}"
+      done
+
+      echo "+ patching files"
+      tmp="/tmp/${name}.out.tmp.$$"
+      for i in `grep -rl phx_graphql *`; do
+        sed "s/phx_graphql/${name}/g" "${i}" > ${tmp} && mv ${tmp} "${i}"
+      done
+      for j in `grep -rl PhxGraphql *`; do
+        sed "s/PhxGraphql/${ucfirst}/g" "${j}" > ${tmp} && mv ${tmp} "${j}"
+      done
+
+      echo "+ creating release config"
+      mix release.init
+
+      echo "+ cleanup"
+      rm new_project
+
+      echo "+ bootstraping git"
+      git init
+      git add .
+      git commit -m "empty react/phoenix project"
+
+      while true; do
+        read -p "want me to fetch dependencies? " yn
+        case $yn in
+          [Nn]* )
+            exit;;
+          [Yy]* )
+            echo "+ fetching elixir dependencies"
+            mix deps.get
+
+            echo "+ fetching js dependencies"
+            npm install
+            break;;
+          * ) echo "Please answer yes or no.";;
+        esac
+      done
+      break;;
+    * ) echo "Please answer yes or no.";;
+  esac
+  echo "+ try your new project out by running:"
+  echo "iex -S mix phx.server"
+done
