@@ -19,8 +19,11 @@ defmodule PhxGraphqlWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", PhxGraphqlWeb do
-  #   pipe_through :api
-  # end
+  scope "/api" do
+    pipe_through(:api)
+
+    forward("/graphiql", Absinthe.Plug.GraphiQL, schema: PhxGraphqlWeb.Schema)
+
+    forward("/", Absinthe.Plug, schema: PhxGraphqlWeb.Schema)
+  end
 end

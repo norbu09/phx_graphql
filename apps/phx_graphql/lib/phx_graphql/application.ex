@@ -12,6 +12,9 @@ defmodule PhxGraphql.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    # start CouchDB migration task
+    Task.async(fn -> CouchViewManager.migrate() end)
+
     Supervisor.start_link([
       
     ], strategy: :one_for_one, name: PhxGraphql.Supervisor)

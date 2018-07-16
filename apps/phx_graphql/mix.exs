@@ -23,7 +23,7 @@ defmodule PhxGraphql.Mixfile do
   def application do
     [
       mod: {PhxGraphql.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :couchex, :couch_view_manager]
     ]
   end
 
@@ -35,7 +35,10 @@ defmodule PhxGraphql.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    []
+    [
+      {:couchex, github: "iwantmyname/couchex"},
+      {:couch_view_manager, github: "norbu09/couch_view_manager"}
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

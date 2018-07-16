@@ -24,7 +24,7 @@ defmodule PhxGraphqlWeb.Mixfile do
   def application do
     [
       mod: {PhxGraphqlWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :absinthe_plug]
     ]
   end
 
@@ -43,7 +43,8 @@ defmodule PhxGraphqlWeb.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:phx_graphql, in_umbrella: true},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:absinthe_plug, ">= 1.3.0"},
     ]
   end
 
