@@ -1,5 +1,6 @@
 defmodule PhxGraphqlWeb.PageController do
   use PhxGraphqlWeb, :controller
+  require Logger
   alias PhxGraphqlWeb.Guardian
 
   def index(conn, _params) do

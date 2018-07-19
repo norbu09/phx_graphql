@@ -40,8 +40,8 @@ defmodule PhxGraphqlWeb.Router do
   scope "/api" do
     pipe_through(:api)
 
-    forward("/", Absinthe.Plug, schema: PhxGraphqlWeb.Schema)
     forward("/graphiql", Absinthe.Plug.GraphiQL, schema: PhxGraphqlWeb.Schema)
+    forward("/", Absinthe.Plug, schema: PhxGraphqlWeb.Schema)
   end
 
   scope "/app", PhxGraphqlWeb do
