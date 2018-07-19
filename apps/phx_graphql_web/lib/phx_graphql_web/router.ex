@@ -7,6 +7,7 @@ defmodule PhxGraphqlWeb.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+    plug(:set_current_user)
   end
 
   pipeline :api do
@@ -34,7 +35,7 @@ defmodule PhxGraphqlWeb.Router do
     get   "/forgot-password", PageController, :forgot_password
     post  "/forgot-password", PageController, :forgot_password
 
-    get "/logout", PageController, :logout
+    post "/logout", PageController, :logout
   end
 
   scope "/api" do
@@ -48,5 +49,10 @@ defmodule PhxGraphqlWeb.Router do
     pipe_through [:browser, :app]
     
     get "/*path", AppController, :index
+  end
+
+  def set_current_user(conn, _) do
+    conn
+    |> assign(:current_user, get_session(conn, :current_user))
   end
 end
