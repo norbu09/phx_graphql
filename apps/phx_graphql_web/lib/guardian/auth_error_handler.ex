@@ -18,7 +18,7 @@ defmodule PhxGraphqlWeb.Guardian.AuthErrorHandler do
   end
   def auth_error(conn, {type, reason}, _opts) do
     Logger.error("Got an unhandeled auth error: #{inspect type}: #{inspect reason}")
-    conn
+    redirect(conn, to: "/")
   end
   
 end

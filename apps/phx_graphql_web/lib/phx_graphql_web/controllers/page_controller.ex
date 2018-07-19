@@ -3,11 +3,13 @@ defmodule PhxGraphqlWeb.PageController do
   require Logger
   alias PhxGraphqlWeb.Guardian
 
+  plug PhxGraphqlWeb.Guardian.AnonPipeline
+
   def index(conn, _params) do
     render(conn, "index.html")
   end
 
-  def login(conn, %{"user" => _user} = params) do
+  def login(conn, %{"email" => _user} = params) do
     case PhxGraphqlWeb.Session.authenticate(params) do
       {:ok, user} ->
         Logger.debug("Logging user in: #{inspect user}")
@@ -20,8 +22,13 @@ defmodule PhxGraphqlWeb.PageController do
         |> render("login.html")
     end
   end
+  def login(conn, %{}) do
+    conn
+    |> render("login.html")
+  end
   def login(conn, _params) do
     conn
+    |> put_flash(:error, "Username or password were not correct")
     |> render("login.html")
   end
 
@@ -33,6 +40,7 @@ defmodule PhxGraphqlWeb.PageController do
   def signup(conn, %{"email" => _email} = params) do
     case PhxGraphql.User.create(params) do
       {:ok, user} ->
+        Logger.debug("Got a user for login: #{inspect user}")
         conn
         |> put_session(:signup, params)
         |> Guardian.Plug.sign_in(user)
