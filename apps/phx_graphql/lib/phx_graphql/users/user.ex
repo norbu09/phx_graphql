@@ -30,8 +30,8 @@ defmodule PhxGraphql.User do
     {:error, :no_user}
   end
 
-  def get_user(email) do
-    case get_user_with_pw(email) do
+  def get_user(username) do
+    case get_user_with_pw(username) do
       {:ok, user} ->
         {:ok, Map.delete(user, "password")}
 
@@ -47,9 +47,9 @@ defmodule PhxGraphql.User do
   end
 
   defp create_user(user) do
-    case user_exists?(user["email"]) do
+    case user_exists?(user["username"]) do
       true ->
-        Logger.debug("User #{user["email"]} exists!")
+        Logger.debug("User #{user["username"]} exists!")
         {:error, :user_exists}
 
       false ->
@@ -74,23 +74,23 @@ defmodule PhxGraphql.User do
     end
   end
 
-  defp user_exists?(email) do
-    case Couchex.Client.get(@db, %{view: "user/by_email"}, %{"key" => String.downcase(email)}) do
+  defp user_exists?(username) do
+    case Couchex.Client.get(@db, %{view: "user/by_username"}, %{"key" => String.downcase(username)}) do
       {:ok, [%{"id" => _id}]} -> true
       _ -> false
     end
   end
 
-  defp get_user_with_pw(email) do
+  defp get_user_with_pw(username) do
     {:ok, view} =
-      Couchex.Client.get(@db, %{view: "user/by_email", key_based: true}, %{
+      Couchex.Client.get(@db, %{view: "user/by_username", key_based: true}, %{
         "include_docs" => true,
-        "key" => String.downcase(email)
+        "key" => String.downcase(username)
       })
 
     Logger.debug("Found a user: #{inspect(view)}")
 
-    case view[email] do
+    case view[username] do
       nil ->
         {:error, :no_user}
 
@@ -100,7 +100,7 @@ defmodule PhxGraphql.User do
   end
 
   defp clean_post_data(data) do
-    fields = ["company", "email", "password"]
+    fields = ["company", "username", "password"]
 
     Enum.filter(data, fn {x, _y} -> x in fields end)
     |> Map.new()
@@ -118,7 +118,7 @@ defmodule PhxGraphql.User do
   defp encrypt_password(doc) do
     %{
       doc
-      | "email" => String.downcase(doc["email"]),
+      | "username" => String.downcase(doc["username"]),
         "password" => Pbkdf2.hash_pwd_salt(doc["password"])
     }
   end

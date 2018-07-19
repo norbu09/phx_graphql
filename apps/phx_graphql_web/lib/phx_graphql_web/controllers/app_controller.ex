@@ -4,8 +4,6 @@ defmodule PhxGraphqlWeb.AppController do
   alias PhxGraphqlWeb.Guardian
   alias PhxGraphql.User
 
-  plug PhxGraphqlWeb.Guardian.AuthPipeline
-
   def index(conn, _params) do
     token = Guardian.Plug.current_token(conn)
     claims = Guardian.Plug.current_claims(conn)

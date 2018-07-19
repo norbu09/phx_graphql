@@ -3,13 +3,11 @@ defmodule PhxGraphqlWeb.PageController do
   require Logger
   alias PhxGraphqlWeb.Guardian
 
-  plug PhxGraphqlWeb.Guardian.AnonPipeline
-
   def index(conn, _params) do
     render(conn, "index.html")
   end
 
-  def login(conn, %{"email" => _user} = params) do
+  def login(conn, %{"username" => _user} = params) do
     case PhxGraphqlWeb.Session.authenticate(params) do
       {:ok, user} ->
         Logger.debug("Logging user in: #{inspect user}")
@@ -37,7 +35,7 @@ defmodule PhxGraphqlWeb.PageController do
     |> render("forgot_password.html")
   end
 
-  def signup(conn, %{"email" => _email} = params) do
+  def signup(conn, %{"username" => _user} = params) do
     case PhxGraphql.User.create(params) do
       {:ok, user} ->
         Logger.debug("Got a user for login: #{inspect user}")

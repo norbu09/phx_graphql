@@ -8,6 +8,7 @@ defmodule PhxGraphqlWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(:set_current_user)
+    plug PhxGraphqlWeb.Guardian.AnonPipeline
   end
 
   pipeline :api do
