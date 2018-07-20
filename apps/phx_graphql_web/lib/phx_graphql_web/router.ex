@@ -8,7 +8,6 @@ defmodule PhxGraphqlWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(:set_current_user)
-    plug PhxGraphqlWeb.Guardian.AnonPipeline
   end
 
   pipeline :api do
@@ -17,7 +16,6 @@ defmodule PhxGraphqlWeb.Router do
   end
 
   pipeline :app do
-    plug PhxGraphqlWeb.Guardian.AuthPipeline
   end
 
 
@@ -54,6 +52,6 @@ defmodule PhxGraphqlWeb.Router do
 
   def set_current_user(conn, _) do
     conn
-    |> assign(:current_user, get_session(conn, :current_user))
+    |> assign(:current_user, get_session(conn, :user))
   end
 end

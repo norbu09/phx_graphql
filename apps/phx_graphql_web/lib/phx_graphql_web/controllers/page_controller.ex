@@ -1,7 +1,6 @@
 defmodule PhxGraphqlWeb.PageController do
   use PhxGraphqlWeb, :controller
   require Logger
-  alias PhxGraphqlWeb.Guardian
 
   def index(conn, _params) do
     render(conn, "index.html")
@@ -10,9 +9,8 @@ defmodule PhxGraphqlWeb.PageController do
   def login(conn, %{"username" => _user} = params) do
     case PhxGraphqlWeb.Session.authenticate(params) do
       {:ok, user} ->
-        Logger.debug("Logging user in: #{inspect user}")
         conn
-        |> Guardian.Plug.sign_in(user)
+        |> put_session(:user, user)
         |> redirect(to: "/app")
       {:error, _error} ->
         conn
@@ -40,14 +38,13 @@ defmodule PhxGraphqlWeb.PageController do
       {:ok, user} ->
         Logger.debug("Got a user for login: #{inspect user}")
         conn
-        |> put_session(:signup, params)
-        |> Guardian.Plug.sign_in(user)
+        |> put_session(:user, user)
         |> redirect(to: "/app")
       {:error, _error} ->
         case PhxGraphqlWeb.Session.authenticate(params) do
           {:ok, user} ->
             conn
-            |> Guardian.Plug.sign_in(user)
+            |> put_session(:user, user)
             |> redirect(to: "/app")
           {:error, _error} ->
             conn
@@ -63,7 +60,7 @@ defmodule PhxGraphqlWeb.PageController do
 
   def logout(conn, _params) do
     conn
-    |> Guardian.Plug.sign_out()
+    |> delete_session(:user)
     |> redirect(to: "/")
   end
   

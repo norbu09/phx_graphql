@@ -13,13 +13,14 @@ defmodule PhxGraphqlWeb.Guardian.AuthErrorHandler do
   #  :no_resource_found
 
   
-  def auth_error(conn, {:unauthenticated, reason}, _opts) do
-    Logger.error("Unauthenticated: #{inspect reason}")
+  def auth_error(conn, {:unauthenticated, reason}, opts) do
+    Logger.error("Unauthenticated: #{inspect reason} with opts: #{inspect opts}")
     redirect(conn, to: "/")
   end
   def auth_error(conn, {type, reason}, _opts) do
     Logger.error("Got an unhandeled auth error: #{inspect type}: #{inspect reason}")
-    redirect(conn, to: "/")
+    #redirect(conn, to: "/")
+    conn
   end
   
 end
