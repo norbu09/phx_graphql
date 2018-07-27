@@ -2,7 +2,6 @@ defmodule Views.User do
   def user_by_username do
     %{
       doc: "_design/user",
-      db: "phx_graphql",
       view: "by_username",
       map: "function(doc) {if(doc.type == \"user\"){emit(doc.username, null);}}"
     }
@@ -11,7 +10,6 @@ defmodule Views.User do
   def user_by_token do
     %{
       doc: "_design/user",
-      db: "phx_graphql",
       view: "by_token",
       map: "function(doc) {if(doc.type == \"user\"){for(i in doc.token){emit(doc.token[i], null);}}}"
     }

@@ -3,10 +3,10 @@ defmodule PhxGraphql.Things do
   The Things context.
   """
 
-  @db Application.get_env(:couchex, :db)
   alias PhxGraphql.Things.Thing
   alias PhxGraphql.Users.User
   require Logger
+  @db Application.get_env(:couchex, :db)
 
   @doc """
   Returns the list of things.
@@ -18,6 +18,7 @@ defmodule PhxGraphql.Things do
 
   """
   def list_things do
+    Logger.info("DB: #{inspect @db}")
     case Couchex.Client.get(@db, %{view: "things/all"}, %{"include_docs" => true}) do
       {:ok, things} ->
         things
