@@ -50,8 +50,7 @@ defmodule PhxGraphqlWeb.Mixfile do
 
       # Auth
       {:comeonin, ">= 3.0.1"},
-      {:pbkdf2_elixir, ">= 0.12.0"},
-      {:guardian, ">= 1.0.0"}
+      {:pbkdf2_elixir, ">= 0.12.0"}
     ]
   end
 

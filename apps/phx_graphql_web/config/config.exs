@@ -22,13 +22,6 @@ config :logger, :console,
 
 config :phx_graphql_web, :generators, context_app: :phx_graphql
 
-config :phx_graphql_web, PhxGraphqlWeb.Guardian,
-  issuer: "PhxGraphql",
-  allowed_algos: ["HS512", "HS384"],
-  ttl: { 30, :days },
-  verify_issuer: true,
-  secret_key: "Jr2DmPXTx5xxO/6Rd0/1HAvmw1eqEPGf29h68eCCIp45Unosm5DkxU1osgSRUiO+"
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

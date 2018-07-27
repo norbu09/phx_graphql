@@ -12,7 +12,6 @@ defmodule PhxGraphqlWeb.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
-    # plug PhxGraphqlWeb.Guardian.AuthPipeline
     plug PhxGraphqlWeb.Context
   end
 
