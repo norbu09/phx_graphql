@@ -7,6 +7,7 @@ defmodule PhxGraphqlWeb.AppController do
     Logger.debug("initial state: #{inspect(initial_state)}")
 
     conn
+    |> put_layout("app.html")
     |> render("index.html", props: initial_state)
   end
 

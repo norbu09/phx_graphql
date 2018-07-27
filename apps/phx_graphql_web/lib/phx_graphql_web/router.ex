@@ -16,6 +16,7 @@ defmodule PhxGraphqlWeb.Router do
   end
 
   pipeline :app do
+    plug(:ensure_authenticated)
   end
 
   scope "/", PhxGraphqlWeb do
@@ -46,11 +47,21 @@ defmodule PhxGraphqlWeb.Router do
   scope "/app", PhxGraphqlWeb do
     pipe_through([:browser, :app])
 
+    get("/", AppController, :index)
     get("/*path", AppController, :index)
   end
 
   def set_current_user(conn, _) do
     conn
     |> assign(:current_user, get_session(conn, :current_user))
+  end
+
+  def ensure_authenticated(conn, _) do
+    case get_session(conn, :current_user) do
+      %PhxGraphql.Users.User{username: _user} -> 
+        conn
+      _ ->
+        conn |> put_flash(:error, "You must be logged in") |> redirect(to: "/")
+    end
   end
 end

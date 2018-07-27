@@ -5,7 +5,9 @@ defmodule PhxGraphqlWeb.PageController do
   alias PhxGraphqlWeb.Session
 
   def index(conn, _params) do
-    render(conn, "index.html")
+    conn
+    |> put_layout("page.html")
+    |> render("index.html")
   end
 
   def login(conn, %{"username" => _user} = params) do
@@ -13,28 +15,33 @@ defmodule PhxGraphqlWeb.PageController do
       {:ok, user} ->
         conn
         |> put_session(:current_user, user)
+        |> put_layout("page.html")
         |> redirect(to: "/app")
 
       {:error, _error} ->
         conn
         |> put_flash(:error, "Username or password were not correct")
+        |> put_layout("page.html")
         |> render("login.html")
     end
   end
 
   def login(conn, %{}) do
     conn
+    |> put_layout("page.html")
     |> render("login.html")
   end
 
   def login(conn, _params) do
     conn
     |> put_flash(:error, "Username or password were not correct")
+    |> put_layout("page.html")
     |> render("login.html")
   end
 
   def forgot_password(conn, _params) do
     conn
+    |> put_layout("page.html")
     |> render("forgot_password.html")
   end
 
@@ -57,6 +64,7 @@ defmodule PhxGraphqlWeb.PageController do
           {:error, _error} ->
             conn
             |> put_flash(:error, "Could not create account, please contact support")
+            |> put_layout("page.html")
             |> render("signup.html")
         end
     end
@@ -64,6 +72,7 @@ defmodule PhxGraphqlWeb.PageController do
 
   def signup(conn, _params) do
     conn
+    |> put_layout("page.html")
     |> render("signup.html", signup: get_session(conn, :signup))
   end
 
