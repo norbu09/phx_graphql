@@ -11,5 +11,6 @@ This starter includes the following bits, already configured and ready to go:
 - CouchDB view migrator so you can maintain your views in elixir code and they
   get utomatically updated in CouchDB on application start
 - Apsinthe for your GraphQL needs. Documentation is under https://hexdocs.pm/absinthe
+- `comeonin` for authentication handling backed into CouchDB
 - Distillery for release bundling. Documentation is under https://hexdocs.pm/distillery/getting-started.html
-- `comeonin` + `guardian` for authentication handling backed into CouchDB
+- `dyalixer` for type checking
