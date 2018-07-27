@@ -7,20 +7,16 @@ defmodule PhxGraphqlWeb.ThingResolver do
     {:ok, things}
   end
 
-  def user_things(_root, _args, %{context: %{current_user: %{"id" => id}}}) do
+  def user_things(_root, _args, %{context: %{current_user: %{id: id}}}) do
     things = Things.list_user_things(id)
     {:ok, things}
   end
-  def user_things(_root, args, info) do
-    Logger.debug("Got args: #{inspect args} with info #{inspect info.context}")
+  def user_things(_root, _args, _info) do
     {:error, "Not Authorized"}
   end
 
   def create_thing(_root, args, %{context: %{current_user: user}}) do
-    # TODO: add detailed error message handling later
-    Logger.debug("User for create: #{user}")
-
-    case Things.create_thing(args) do
+    case Things.create_thing(args, user) do
       {:ok, thing} ->
         {:ok, thing}
 
@@ -30,7 +26,7 @@ defmodule PhxGraphqlWeb.ThingResolver do
   end
 
   def create_thing(_root, _args, _info) do
-    {:error, "Access denied"}
+    {:error, "Not Authorized"}
   end
 
   def find_thing(_parent, %{id: id}, _resolution) do

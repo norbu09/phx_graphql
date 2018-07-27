@@ -1,7 +1,7 @@
 defmodule PhxGraphql.Things.Thing do
   require Logger
 
-  @record [:id, :description]
+  @record [:id, :description, :user]
 
   defstruct @record
 

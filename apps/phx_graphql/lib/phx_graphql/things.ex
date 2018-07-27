@@ -83,17 +83,18 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> create_thing(%{field: value})
+      iex> create_thing(%{field: value}, %User)
       {:ok, %Thing{}}
 
-      iex> create_thing(%{field: bad_value})
+      iex> create_thing(%{field: bad_value}, %User)
       {:error, error}
 
   """
-  def create_thing(attrs \\ %{}) do
+  def create_thing(attrs, user) do
     doc =
       attrs
       |> Map.put("type", "thing")
+      |> Map.put("user", user.id)
 
     Logger.debug("create: #{inspect(doc)}")
 
