@@ -5,6 +5,7 @@ defmodule PhxGraphql.Things do
 
   @db Application.get_env(:couchex, :db)
   alias PhxGraphql.Things.Thing
+  alias PhxGraphql.Users.User
   require Logger
 
   @doc """
@@ -131,16 +132,26 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> delete_thing(thing)
+      iex> delete_thing(%Thing, %User)
       {:ok, %Thing{}}
 
-      iex> delete_thing(thing)
-      {:error, %Changeset{}}
+      iex> delete_thing(%Thing, %User)
+      {:error, error}
 
   """
-  def delete_thing(%Thing{} = thing) do
-    Logger.debug("delete: #{inspect(thing)}")
-    {:ok, thing}
+  def delete_thing(%{id: id, version: rev}, %User{id: user_id}) do
+    case get_thing!(id) do
+      %Thing{} = thing ->
+        case thing.user == user_id do
+          true -> 
+            case delete_thing(%{"_id" => id, "_rev" => rev}) do
+              true -> {:ok, thing}
+              _ -> {:error, :version_mismatch}
+            end
+          _ -> {:error, :authentication_error}
+        end
+      _ -> {:error, :document_not_found}
+    end
   end
 
   @doc """
@@ -155,5 +166,15 @@ defmodule PhxGraphql.Things do
   def change_thing(%Thing{} = thing) do
     Logger.debug("change: #{inspect(thing)}")
     :ok
+  end
+
+
+  ## internal plumbing ##
+
+  defp delete_thing(doc) do
+    case Couchex.Client.del(@db, doc) do
+      {:ok, %{"ok" => true}} -> true
+      _ -> false
+    end
   end
 end

@@ -5,6 +5,7 @@ defmodule PhxGraphqlWeb.Schema do
   object :thing do
     field(:id, non_null(:id))
     field(:description, non_null(:string))
+    field(:version, :string)
   end
 
   query do
@@ -31,6 +32,14 @@ defmodule PhxGraphqlWeb.Schema do
       arg(:description, non_null(:string))
 
       resolve(&ThingResolver.create_thing/3)
+    end
+
+    @desc "Delete a things"
+    field :delete_thing, :thing do
+      arg(:id, non_null(:id))
+      arg(:version, non_null(:string))
+
+      resolve(&ThingResolver.delete_thing/3)
     end
   end
 end

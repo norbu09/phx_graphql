@@ -24,7 +24,6 @@ defmodule PhxGraphql.User do
   end
 
   def validate_token(token) do
-    Logger.debug("token >>#{token}<<")
     case Couchex.Client.get(@db, %{view: "user/by_token"}, %{"key" => token, "include_docs" => true}) do
       {:ok, [%{"doc" => %{"_id" => _id} = user}]} -> 
         {:ok, User.new(user)}

@@ -24,7 +24,6 @@ defmodule PhxGraphqlWeb.ThingResolver do
         {:error, "could not create thing"}
     end
   end
-
   def create_thing(_root, _args, _info) do
     {:error, "Not Authorized"}
   end
@@ -37,5 +36,17 @@ defmodule PhxGraphqlWeb.ThingResolver do
       thing ->
         {:ok, thing}
     end
+  end
+
+  def delete_thing(_root, %{id: _id, version: _ver} = args, %{context: %{current_user: user}}) do
+    case Things.delete_thing(args, user) do
+      {:ok, thing} ->
+        {:ok, thing}
+
+      error -> error
+    end
+  end
+  def delete_thing(_root, _args, _info) do
+    {:error, "Not Authorized"}
   end
 end
