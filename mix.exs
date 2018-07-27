@@ -23,6 +23,7 @@ defmodule PhxGraphql.Umbrella.Mixfile do
   # and cannot be accessed from applications inside the apps folder
   defp deps do
     [
+      {:dialyxir, ">= 0.4.0", only: [:dev], runtime: false},
       {:distillery, "~> 1.5", runtime: false}
     ]
   end

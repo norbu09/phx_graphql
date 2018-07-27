@@ -8,17 +8,8 @@ defmodule PhxGraphql.Things do
   require Logger
   @db Application.get_env(:couchex, :db)
 
-  @doc """
-  Returns the list of things.
-
-  ## Examples
-
-      iex> list_things()
-      [%Thing{}, ...]
-
-  """
+  @spec list_things() :: list(%Thing{})
   def list_things do
-    Logger.info("DB: #{inspect @db}")
     case Couchex.Client.get(@db, %{view: "things/all"}, %{"include_docs" => true}) do
       {:ok, things} ->
         things
@@ -37,10 +28,10 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> get_thing!(123)
+      iex> PhxGraphql.Things.get_thing!(123)
       %Thing{}
 
-      iex> get_thing!(456)
+      iex> PhxGraphql.Things.get_thing!(456)
       ** (NoResultsError)
 
   """
@@ -62,8 +53,8 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> list_user_things()
-      [%Thing{}, ...]
+      iex> PhxGraphql.Things.list_user_things("123abc")
+      [%Thing{}]
 
   """
   def list_user_things(user) do
@@ -85,11 +76,11 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> create_thing(%{field: value}, %User)
+      iex> PhxGraphql.Things.create_thing(%{field: value}, %User)
       {:ok, %Thing{}}
 
-      iex> create_thing(%{field: bad_value}, %User)
-      {:error, error}
+      iex> PhxGraphql.Things.create_thing(%{field: bad_value}, %User)
+      {:error, :error}
 
   """
   def create_thing(attrs, user) do
@@ -116,11 +107,11 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> update_thing(thing, %{field: new_value})
+      iex> PhxGraphql.Things.update_thing(%Thing, %{field: :new_value})
       {:ok, %Thing{}}
 
-      iex> update_thing(thing, %{field: bad_value})
-      {:error, %Changeset{}}
+      iex> PhxGraphql.Things.update_thing(%Thing, %{field: :bad_value})
+      {:error, :error}
 
   """
   def update_thing(%Thing{} = thing, attrs) do
@@ -133,11 +124,11 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> delete_thing(%Thing, %User)
+      iex> PhxGraphql.Things.delete_thing(%Thing{}, %User{})
       {:ok, %Thing{}}
 
-      iex> delete_thing(%Thing, %User)
-      {:error, error}
+      iex> PhxGraphql.Things.delete_thing(%Thing{}, %User{})
+      {:error, :authentication_error}
 
   """
   def delete_thing(%{id: id, version: rev}, %User{id: user_id}) do
@@ -160,8 +151,8 @@ defmodule PhxGraphql.Things do
 
   ## Examples
 
-      iex> change_thing(thing)
-      %Thing{}}
+      iex> PhxGraphql.Things.change_thing(%Thing{})
+      :ok
 
   """
   def change_thing(%Thing{} = thing) do
