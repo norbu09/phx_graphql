@@ -1,7 +1,7 @@
-defmodule PhxGraphql.Things.Thing do
+defmodule PhxGraphql.Users.User do
   require Logger
 
-  @record [id: :binary, version: :binary, description: :binary, user: :binary]
+  @record [:id, :username, :created, :company, :version]
 
   defstruct @record
 
@@ -17,5 +17,13 @@ defmodule PhxGraphql.Things.Thing do
 
     rec = Enum.reduce(@record, %{}, fn x, y -> Map.put(y, x, m2[Atom.to_string(x)]) end)
     struct(%__MODULE__{}, rec)
+  end
+
+  def to_doc(map) do
+    map
+    |> Map.put("_id", map["id"])
+    |> Map.put("_rev", map["version"])
+    |> Map.delete("id")
+    |> Map.delete("version")
   end
 end

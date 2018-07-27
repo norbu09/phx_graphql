@@ -12,3 +12,4 @@ This starter includes the following bits, already configured and ready to go:
   get utomatically updated in CouchDB on application start
 - Apsinthe for your GraphQL needs. Documentation is under https://hexdocs.pm/absinthe
 - Distillery for release bundling. Documentation is under https://hexdocs.pm/distillery/getting-started.html
+- `comeonin` + `guardian` for authentication handling backed into CouchDB

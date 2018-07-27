@@ -44,7 +44,13 @@ defmodule PhxGraphqlWeb.Mixfile do
       {:gettext, "~> 0.11"},
       {:phx_graphql, in_umbrella: true},
       {:cowboy, "~> 1.0"},
-      {:absinthe_plug, ">= 1.3.0"}
+
+      # API
+      {:absinthe_plug, ">= 1.3.0"},
+
+      # Auth
+      {:comeonin, ">= 3.0.1"},
+      {:pbkdf2_elixir, ">= 0.12.0"}
     ]
   end
 
