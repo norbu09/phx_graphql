@@ -48,7 +48,10 @@ defmodule PhxGraphqlWeb.Router do
     pipe_through([:browser, :app])
 
     get("/", AppController, :index)
-    get("/*path", AppController, :index)
+    get("/profile/edit", AppController, :profile)
+    post("/profile/edit", AppController, :profile)
+
+    get("/*path", AppController, :unauthenticated)
   end
 
   def set_current_user(conn, _) do

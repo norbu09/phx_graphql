@@ -1,0 +1,40 @@
+<article class="pa4 black-80">
+  <h2 class="f4 measure center">update profile</h2>
+  <%= form_tag app_path(@conn, :profile), [method: "post", class: "measure center"] do %>
+    <fieldset id="profile" class="ba b--transparent ph0 mh0">
+      <div class="mt3">
+        <label class="db fw6 lh-copy f6" for="username">
+          Email <input class="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="username"  id="username" value="<%= @user.username %>">
+        </label>
+      </div>
+      <div class="mv3">
+        <label class="db fw6 lh-copy f6" for="company">
+          Company <input class="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="text" name="company"  id="company" value="<%= @user.company %>">
+        </label>
+      </div>
+    </fieldset>
+    <div class="">
+      <input class="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="update">
+    </div>
+  <% end %>
+</article>
+<article class="pa4 black-80">
+  <h2 class="f4 measure center">API token</h2>
+  <ul class="list pl0 mt0 measure center">
+    <%= for i <- @token do %>
+      <li class="flex items-center lh-copy pa3 ph0-l bb b--black-10">
+        <div class="pl3 flex-auto">
+          <span class="f6 db black-70"><%= i %></span>
+        </div>
+        <div>
+          <a href="#" class="f6 link blue hover-dark-gray">del</a>
+        </div>
+      </li>
+    <% end %>
+    <li class="flex items-center lh-copy pa3 ph0-l bb b--black-10">
+      <div class="pl3 flex-auto">
+          <a href="#" class="f6 link blue hover-dark-gray">generate new token</a>
+      </div>
+    </li>
+  </ul>
+</article>

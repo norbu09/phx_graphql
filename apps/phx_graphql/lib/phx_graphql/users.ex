@@ -51,6 +51,11 @@ defmodule PhxGraphql.User do
     DateTime.to_unix(DateTime.utc_now())
   end
 
+  @spec update(%User{}) :: {:ok, %User{}} | {:error, atom()}
+  def update(user) do
+    {:ok, user}
+  end
+  
   #### internal functions
 
   defp create_user(user) do

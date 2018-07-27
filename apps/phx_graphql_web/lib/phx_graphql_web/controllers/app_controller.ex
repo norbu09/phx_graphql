@@ -3,12 +3,21 @@ defmodule PhxGraphqlWeb.AppController do
   require Logger
 
   def index(conn, _params) do
-    initial_state = %{"phx_graphql" => get_session(conn, :current_user)}
-    Logger.debug("initial state: #{inspect(initial_state)}")
-
     conn
     |> put_layout("app.html")
-    |> render("index.html", props: initial_state)
+    |> render("index.html", user: get_session(conn, :current_user))
+  end
+
+  def profile(conn, %{}) do
+    conn
+    |> put_layout("app.html")
+    |> render("profile.html", token: ["foo123", "bar123"], user: get_session(conn, :current_user))
+  end
+  def profile(conn, params) do
+    PhxGraphql.User.update(params)
+    conn
+    |> put_layout("app.html")
+    |> render("profile.html", token: ["foo123", "bar123"], user: get_session(conn, :current_user))
   end
 
   def unauthenticated(conn, _params) do
