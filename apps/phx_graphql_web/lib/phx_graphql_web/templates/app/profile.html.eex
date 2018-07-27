@@ -19,6 +19,26 @@
   <% end %>
 </article>
 <article class="pa4 black-80">
+  <h2 class="f4 measure center">change password</h2>
+  <%= form_tag app_path(@conn, :profile), [method: "post", class: "measure center"] do %>
+    <fieldset id="update_password" class="ba b--transparent ph0 mh0">
+      <div class="mt3">
+        <label class="db fw6 lh-copy f6" for="current_password">
+          current password <input class="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="current_password"  id="current_password">
+        </label>
+      </div>
+      <div class="mt3">
+        <label class="db fw6 lh-copy f6" for="new_password">
+          new password <input class="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="new_password"  id="new_password">
+        </label>
+      </div>
+    </fieldset>
+    <div class="">
+      <input class="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="update">
+    </div>
+  <% end %>
+</article>
+<article class="pa4 black-80">
   <h2 class="f4 measure center">API token</h2>
   <ul class="list pl0 mt0 measure center">
     <%= for i <- @token do %>
