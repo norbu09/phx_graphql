@@ -56,6 +56,29 @@ defmodule PhxGraphql.Things do
   end
 
   @doc """
+  Returns the list of things belonging to one user.
+
+  ## Examples
+
+      iex> list_user_things()
+      [%Thing{}, ...]
+
+  """
+  def list_user_things(user) do
+    case Couchex.Client.get(@db, %{view: "things/by_user"}, %{"key" => user, "include_docs" => true}) do
+      {:ok, []} ->
+        []
+
+      {:ok, things} ->
+        things
+        |> Enum.map(fn x -> Thing.new(x) end)
+
+      error ->
+        error
+    end
+  end
+
+  @doc """
   Creates a thing.
 
   ## Examples

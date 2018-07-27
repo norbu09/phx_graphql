@@ -18,6 +18,11 @@ defmodule PhxGraphqlWeb.Schema do
       arg(:id, non_null(:id))
       resolve(&ThingResolver.find_thing/3)
     end
+
+    @desc "Get all user things"
+    field :all_user_things, non_null(list_of(non_null(:thing))) do
+      resolve(&ThingResolver.user_things/3)
+    end
   end
 
   mutation do

@@ -1,16 +1,18 @@
 defmodule PhxGraphqlWeb.PageController do
   use PhxGraphqlWeb, :controller
   require Logger
+  alias PhxGraphql.User
+  alias PhxGraphqlWeb.Session
 
   def index(conn, _params) do
     render(conn, "index.html")
   end
 
   def login(conn, %{"username" => _user} = params) do
-    case PhxGraphqlWeb.Session.authenticate(params) do
+    case Session.authenticate(params) do
       {:ok, user} ->
         conn
-        |> put_session(:user, user)
+        |> put_session(:current_user, user)
         |> redirect(to: "/app")
       {:error, _error} ->
         conn
@@ -34,17 +36,17 @@ defmodule PhxGraphqlWeb.PageController do
   end
 
   def signup(conn, %{"username" => _user} = params) do
-    case PhxGraphql.User.create(params) do
+    case User.create(params) do
       {:ok, user} ->
         Logger.debug("Got a user for login: #{inspect user}")
         conn
-        |> put_session(:user, user)
+        |> put_session(:current_user, user)
         |> redirect(to: "/app")
       {:error, _error} ->
-        case PhxGraphqlWeb.Session.authenticate(params) do
+        case Session.authenticate(params) do
           {:ok, user} ->
             conn
-            |> put_session(:user, user)
+            |> put_session(:current_user, user)
             |> redirect(to: "/app")
           {:error, _error} ->
             conn
@@ -60,7 +62,7 @@ defmodule PhxGraphqlWeb.PageController do
 
   def logout(conn, _params) do
     conn
-    |> delete_session(:user)
+    |> delete_session(:current_user)
     |> redirect(to: "/")
   end
   

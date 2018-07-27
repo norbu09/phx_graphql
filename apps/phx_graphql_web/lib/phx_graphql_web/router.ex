@@ -12,7 +12,8 @@ defmodule PhxGraphqlWeb.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
-    plug PhxGraphqlWeb.Guardian.AuthPipeline
+    # plug PhxGraphqlWeb.Guardian.AuthPipeline
+    plug PhxGraphqlWeb.Context
   end
 
   pipeline :app do
@@ -52,6 +53,6 @@ defmodule PhxGraphqlWeb.Router do
 
   def set_current_user(conn, _) do
     conn
-    |> assign(:current_user, get_session(conn, :user))
+    |> assign(:current_user, get_session(conn, :current_user))
   end
 end

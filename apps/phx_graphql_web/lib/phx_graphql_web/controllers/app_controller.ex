@@ -3,7 +3,7 @@ defmodule PhxGraphqlWeb.AppController do
   require Logger
 
   def index(conn, _params) do
-    initial_state = %{"phx_graphql" => get_session(conn, :user)}
+    initial_state = %{"phx_graphql" => get_session(conn, :current_user)}
     Logger.debug("initial state: #{inspect initial_state}")
 
     conn

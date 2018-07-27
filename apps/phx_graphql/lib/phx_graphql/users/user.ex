@@ -22,6 +22,20 @@ defmodule PhxGraphql.User do
     {:error, :invalid_credentials}
   end
 
+  def validate_token(token) do
+    Logger.debug("token >>#{token}<<")
+    case Couchex.Client.get(@db, %{view: "user/by_token"}, %{"key" => token, "include_docs" => true}) do
+      {:ok, [%{"doc" => %{"_id" => _id} = user}]} -> 
+        user1 = user
+                |> Map.delete("password")
+                |> Map.delete("token")
+                |> Map.put("id", user["_id"])
+        {:ok, user1}
+      _ -> 
+        {:error, :invalid_token}
+    end
+  end
+
   def create(user) do
     create_user(user)
   end
@@ -32,6 +46,16 @@ defmodule PhxGraphql.User do
 
   def get_user(username) do
     case get_user_with_pw(username) do
+      {:ok, user} ->
+        {:ok, Map.delete(user, "password")}
+
+      error ->
+        error
+    end
+  end
+
+  def get_user_by_id(id) do
+    case Couchex.Client.get(@db, id) do
       {:ok, user} ->
         {:ok, Map.delete(user, "password")}
 
