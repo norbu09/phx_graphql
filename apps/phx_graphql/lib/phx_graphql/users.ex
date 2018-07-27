@@ -51,11 +51,31 @@ defmodule PhxGraphql.User do
     DateTime.to_unix(DateTime.utc_now())
   end
 
-  @spec update(%User{}) :: {:ok, %User{}} | {:error, atom()}
-  def update(user) do
-    {:ok, user}
+  @spec update(%User{}, %User{}) :: {:ok, %User{}} | {:error, atom()}
+  def update(user, update) do
+    case user.id == update.id do
+      true ->
+        case User.update(update) do
+          {:ok, upd} ->
+            {:ok, upd}
+          error ->
+          Logger.error("Update failed: #{inspect user} -> #{inspect update}: #{inspect error}")
+            {:error, :update_failed}
+        end
+      false -> {:error, :authentication_error}
+    end
   end
   
+  @spec pw_update(%User{}, binary(), binary()) :: {:ok, %User{}} | {:error, atom()}
+  def pw_update(user, current, new) do
+    case validate_password(user.id, current) do
+      {:ok, user} ->
+        password = Pbkdf2.hash_pwd_salt(new)
+        update(user, struct(user, %{password: password}))
+      _ -> {:error, :authentication_error}
+    end
+  end 
+
   #### internal functions
 
   defp create_user(user) do
