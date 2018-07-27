@@ -8,7 +8,7 @@ defmodule PhxGraphql.Things do
   require Logger
   @db Application.get_env(:couchex, :db)
 
-  @spec list_things() :: list(%Thing{})
+  @spec list_things() :: list(%Thing{}) | [] | {:error, term()}
   def list_things do
     case Couchex.Client.get(@db, %{view: "things/all"}, %{"include_docs" => true}) do
       {:ok, things} ->
@@ -24,17 +24,9 @@ defmodule PhxGraphql.Things do
   end
 
   @doc """
-  Gets a single thing.
-
-  ## Examples
-
-      iex> PhxGraphql.Things.get_thing!(123)
-      %Thing{}
-
-      iex> PhxGraphql.Things.get_thing!(456)
-      ** (NoResultsError)
-
+  Gets a single thing and either return a %Thing or a error tuple.
   """
+  @spec get_thing!(String.t()) :: %Thing{} | {:error, term()}
   def get_thing!(id) do
     case Couchex.Client.get(@db, id) do
       {:ok, thing} ->
@@ -43,22 +35,20 @@ defmodule PhxGraphql.Things do
       {:error, {_status, %{"error" => error}}} ->
         {:error, error}
 
-      error ->
-        error
+      {:error, error} ->
+        {:error, error}
     end
   end
 
   @doc """
   Returns the list of things belonging to one user.
-
-  ## Examples
-
-      iex> PhxGraphql.Things.list_user_things("123abc")
-      [%Thing{}]
-
   """
+  @spec list_user_things(String.t()) :: [] | [%Thing{}, ...] | {:error, term()}
   def list_user_things(user) do
-    case Couchex.Client.get(@db, %{view: "things/by_user"}, %{"key" => user, "include_docs" => true}) do
+    case Couchex.Client.get(@db, %{view: "things/by_user"}, %{
+           "key" => user,
+           "include_docs" => true
+         }) do
       {:ok, []} ->
         []
 
@@ -66,23 +56,15 @@ defmodule PhxGraphql.Things do
         things
         |> Enum.map(fn x -> Thing.new(x) end)
 
-      error ->
-        error
+      {:error, error} ->
+        {:error, error}
     end
   end
 
   @doc """
-  Creates a thing.
-
-  ## Examples
-
-      iex> PhxGraphql.Things.create_thing(%{field: value}, %User)
-      {:ok, %Thing{}}
-
-      iex> PhxGraphql.Things.create_thing(%{field: bad_value}, %User)
-      {:error, :error}
-
+  Creates a %Thing. This needs a user record to assign a user property to the %Thing record.
   """
+  @spec create_thing(map(), %User{}) :: {:ok, %Thing{}} | {:error, term()}
   def create_thing(attrs, user) do
     doc =
       attrs
@@ -97,22 +79,14 @@ defmodule PhxGraphql.Things do
         Logger.debug("Got insert: #{inspect(thing)}")
         {:ok, thing}
 
-      error ->
-        error
+      {:error, error} ->
+        {:error, error}
     end
   end
 
   @doc """
-  Updates a thing.
-
-  ## Examples
-
-      iex> PhxGraphql.Things.update_thing(%Thing, %{field: :new_value})
-      {:ok, %Thing{}}
-
-      iex> PhxGraphql.Things.update_thing(%Thing, %{field: :bad_value})
-      {:error, :error}
-
+  TODO: still needs implementing
+  Takes two %Thing records and updates the first one with the second one.
   """
   def update_thing(%Thing{} = thing, attrs) do
     Logger.debug("update: #{inspect(thing)}: #{inspect(attrs)}")
@@ -120,49 +94,31 @@ defmodule PhxGraphql.Things do
   end
 
   @doc """
-  Deletes a Thing.
-
-  ## Examples
-
-      iex> PhxGraphql.Things.delete_thing(%Thing{}, %User{})
-      {:ok, %Thing{}}
-
-      iex> PhxGraphql.Things.delete_thing(%Thing{}, %User{})
-      {:error, :authentication_error}
-
+  Deletes a %Thing given its ID, version and a user record that has a corresponding user_id.
   """
+  @spec delete_thing(map(), %User{}) :: {:ok, %Thing{}} | {:error, atom()}
   def delete_thing(%{id: id, version: rev}, %User{id: user_id}) do
     case get_thing!(id) do
       %Thing{} = thing ->
         case thing.user == user_id do
-          true -> 
+          true ->
             case delete_thing(%{"_id" => id, "_rev" => rev}) do
               true -> {:ok, thing}
               _ -> {:error, :version_mismatch}
             end
-          _ -> {:error, :authentication_error}
+
+          _ ->
+            {:error, :authentication_error}
         end
-      _ -> {:error, :document_not_found}
+
+      _ ->
+        {:error, :document_not_found}
     end
   end
 
-  @doc """
-  Returns a map for tracking thing changes.
-
-  ## Examples
-
-      iex> PhxGraphql.Things.change_thing(%Thing{})
-      :ok
-
-  """
-  def change_thing(%Thing{} = thing) do
-    Logger.debug("change: #{inspect(thing)}")
-    :ok
-  end
-
-
   ## internal plumbing ##
 
+  @spec delete_thing(map()) :: true | false
   defp delete_thing(doc) do
     case Couchex.Client.del(@db, doc) do
       {:ok, %{"ok" => true}} -> true

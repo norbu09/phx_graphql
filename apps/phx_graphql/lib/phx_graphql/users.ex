@@ -4,6 +4,7 @@ defmodule PhxGraphql.User do
 
   @db Application.get_env(:couchex, :db)
 
+  @spec validate_password(binary(), binary()) :: {:ok, %User{}} | {:error, atom()}
   def validate_password(user_id, pass) do
     case get_user_with_pw(user_id) do
       {:ok, user} ->
@@ -17,54 +18,40 @@ defmodule PhxGraphql.User do
         {:error, :invalid_auth}
     end
   end
-
   def validate_password(_) do
     Pbkdf2.no_user_verify()
     {:error, :invalid_credentials}
   end
 
+  @spec validate_token(binary()) :: {:ok, %User{}} | {:error, atom()}
   def validate_token(token) do
-    case Couchex.Client.get(@db, %{view: "user/by_token"}, %{"key" => token, "include_docs" => true}) do
-      {:ok, [%{"doc" => %{"_id" => _id} = user}]} -> 
+    case Couchex.Client.get(@db, %{view: "user/by_token"}, %{
+           "key" => token,
+           "include_docs" => true
+         }) do
+      {:ok, [%{"doc" => %{"_id" => _id} = user}]} ->
         {:ok, User.new(user)}
-      _ -> 
+
+      _ ->
         {:error, :invalid_token}
     end
   end
 
+  @spec create(%{
+          required(:username) => binary(),
+          required(:password) => binary(),
+          optional(any) => any
+        }) :: {:ok, %User{}} | {:error, atom()}
   def create(user) do
     create_user(user)
   end
 
-  def get_user() do
-    {:error, :no_user}
-  end
-
-  def get_user(username) do
-    case get_user_with_pw(username) do
-      {:ok, user} ->
-        User.new(user)
-
-      error ->
-        error
-    end
-  end
-
-  def get_user_by_id(id) do
-    case Couchex.Client.get(@db, id) do
-      {:ok, user} ->
-        User.new(user)
-
-      error ->
-        error
-    end
-  end
-
-  #### internal functions
-
+  @spec now() :: integer()
   def now do
     DateTime.to_unix(DateTime.utc_now())
   end
+
+  #### internal functions
 
   defp create_user(user) do
     case user_exists?(user["username"]) do
@@ -87,14 +74,16 @@ defmodule PhxGraphql.User do
             {:ok, User.new(u2)}
 
           error ->
-            Logger.error("Error creating user: #{inspect error}")
+            Logger.error("Error creating user: #{inspect(error)}")
             error
         end
     end
   end
 
   defp user_exists?(username) do
-    case Couchex.Client.get(@db, %{view: "user/by_username"}, %{"key" => String.downcase(username)}) do
+    case Couchex.Client.get(@db, %{view: "user/by_username"}, %{
+           "key" => String.downcase(username)
+         }) do
       {:ok, [%{"id" => _id}]} -> true
       _ -> false
     end
