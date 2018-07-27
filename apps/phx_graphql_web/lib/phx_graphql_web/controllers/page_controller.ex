@@ -14,16 +14,19 @@ defmodule PhxGraphqlWeb.PageController do
         conn
         |> put_session(:current_user, user)
         |> redirect(to: "/app")
+
       {:error, _error} ->
         conn
         |> put_flash(:error, "Username or password were not correct")
         |> render("login.html")
     end
   end
+
   def login(conn, %{}) do
     conn
     |> render("login.html")
   end
+
   def login(conn, _params) do
     conn
     |> put_flash(:error, "Username or password were not correct")
@@ -38,16 +41,19 @@ defmodule PhxGraphqlWeb.PageController do
   def signup(conn, %{"username" => _user} = params) do
     case User.create(params) do
       {:ok, user} ->
-        Logger.debug("Got a user for login: #{inspect user}")
+        Logger.debug("Got a user for login: #{inspect(user)}")
+
         conn
         |> put_session(:current_user, user)
         |> redirect(to: "/app")
+
       {:error, _error} ->
         case Session.authenticate(params) do
           {:ok, user} ->
             conn
             |> put_session(:current_user, user)
             |> redirect(to: "/app")
+
           {:error, _error} ->
             conn
             |> put_flash(:error, "Could not create account, please contact support")
@@ -55,6 +61,7 @@ defmodule PhxGraphqlWeb.PageController do
         end
     end
   end
+
   def signup(conn, _params) do
     conn
     |> render("signup.html", signup: get_session(conn, :signup))
@@ -65,5 +72,4 @@ defmodule PhxGraphqlWeb.PageController do
     |> delete_session(:current_user)
     |> redirect(to: "/")
   end
-  
 end

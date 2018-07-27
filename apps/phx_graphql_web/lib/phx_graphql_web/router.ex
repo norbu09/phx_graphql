@@ -12,12 +12,11 @@ defmodule PhxGraphqlWeb.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
-    plug PhxGraphqlWeb.Context
+    plug(PhxGraphqlWeb.Context)
   end
 
   pipeline :app do
   end
-
 
   scope "/", PhxGraphqlWeb do
     # Use the default browser stack
@@ -25,16 +24,16 @@ defmodule PhxGraphqlWeb.Router do
 
     get("/", PageController, :index)
 
-    get  "/register", PageController, :signup
-    post "/register", PageController, :signup
+    get("/register", PageController, :signup)
+    post("/register", PageController, :signup)
 
-    get  "/login", PageController, :login
-    post "/login", PageController, :login
+    get("/login", PageController, :login)
+    post("/login", PageController, :login)
 
-    get   "/forgot-password", PageController, :forgot_password
-    post  "/forgot-password", PageController, :forgot_password
+    get("/forgot-password", PageController, :forgot_password)
+    post("/forgot-password", PageController, :forgot_password)
 
-    post "/logout", PageController, :logout
+    post("/logout", PageController, :logout)
   end
 
   scope "/api" do
@@ -45,9 +44,9 @@ defmodule PhxGraphqlWeb.Router do
   end
 
   scope "/app", PhxGraphqlWeb do
-    pipe_through [:browser, :app]
-    
-    get "/*path", AppController, :index
+    pipe_through([:browser, :app])
+
+    get("/*path", AppController, :index)
   end
 
   def set_current_user(conn, _) do

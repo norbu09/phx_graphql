@@ -11,7 +11,8 @@ defmodule Views.User do
     %{
       doc: "_design/user",
       view: "by_token",
-      map: "function(doc) {if(doc.type == \"user\"){for(i in doc.token){emit(doc.token[i], null);}}}"
+      map:
+        "function(doc) {if(doc.type == \"user\"){for(i in doc.token){emit(doc.token[i], null);}}}"
     }
   end
 end

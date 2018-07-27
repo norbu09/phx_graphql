@@ -1,5 +1,4 @@
 defmodule Views.Things do
-
   def things_all do
     %{
       doc: "_design/things",

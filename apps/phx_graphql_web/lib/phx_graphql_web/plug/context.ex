@@ -16,11 +16,10 @@ defmodule PhxGraphqlWeb.Context do
   """
   def build_context(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-    {:ok, current_user} <- Session.authorize(String.trim(token)) do
+         {:ok, current_user} <- Session.authorize(String.trim(token)) do
       %{current_user: current_user}
     else
       _ -> %{}
     end
   end
-
 end

@@ -4,15 +4,13 @@ defmodule PhxGraphqlWeb.AppController do
 
   def index(conn, _params) do
     initial_state = %{"phx_graphql" => get_session(conn, :current_user)}
-    Logger.debug("initial state: #{inspect initial_state}")
+    Logger.debug("initial state: #{inspect(initial_state)}")
 
     conn
-    |> render("index.html", [props: initial_state])
+    |> render("index.html", props: initial_state)
   end
-  
+
   def unauthenticated(conn, _params) do
     redirect(conn, to: "/")
   end
-
-  
 end
