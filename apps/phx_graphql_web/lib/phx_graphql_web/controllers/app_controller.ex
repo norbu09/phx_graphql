@@ -26,17 +26,18 @@ defmodule PhxGraphqlWeb.AppController do
   end
   def profile(conn, %{"username" => _username, "company" => _company} = update) do
     Logger.debug("profile update")
-    user = get_session(conn, :current_user)
-    upd = struct(user, update)
-    Logger.debug("update: #{inspect upd}")
-    case PhxGraphql.User.update(user, upd) do
+    curr_user = get_session(conn, :current_user)
+    update1 = Enum.reduce(update, %{}, fn({x, y}, z) -> Map.put(z, String.to_atom(x), y) end)
+    upd = Map.merge(curr_user, update1)
+    case PhxGraphql.User.update(curr_user, upd) do
       {:ok, user} ->
         conn
         |> put_session(:current_user, user)
         |> put_flash(:info, "Profile successfully updated")
         |> put_layout("app.html")
-        |> render("profile.html", token: get_token(), user: get_session(conn, :current_user))
-      _ ->
+        |> render("profile.html", token: get_token(), user: user)
+      error ->
+        Logger.error("Password update (controller): #{inspect error}")
         conn
         |> put_flash(:error, "Profile update failed")
         |> put_layout("app.html")

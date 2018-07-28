@@ -56,8 +56,8 @@ defmodule PhxGraphql.User do
     case user.id == update.id do
       true ->
         case User.update(update) do
-          {:ok, upd} ->
-            {:ok, upd}
+          {:ok, _upd} ->
+            {:ok, update}
           error ->
           Logger.error("Update failed: #{inspect user} -> #{inspect update}: #{inspect error}")
             {:error, :update_failed}
@@ -68,11 +68,18 @@ defmodule PhxGraphql.User do
   
   @spec pw_update(%User{}, binary(), binary()) :: {:ok, %User{}} | {:error, atom()}
   def pw_update(user, current, new) do
-    case validate_password(user.id, current) do
+    case validate_password(user.username, current) do
       {:ok, user} ->
         password = Pbkdf2.hash_pwd_salt(new)
-        update(user, struct(user, %{password: password}))
-      _ -> {:error, :authentication_error}
+        case User.update(user, %{password: password}) do
+          {:ok, _upd} -> {:ok, user}
+          error -> 
+            Logger.error("Update failed: #{inspect error}")
+            {:error, :update_failed}
+        end
+      error -> 
+        Logger.error("Password update: #{inspect error}")
+        {:error, :authentication_error}
     end
   end 
 
