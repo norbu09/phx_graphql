@@ -67,5 +67,4 @@ defmodule PhxGraphql.Users.User do
     end
   end
 
-
 end

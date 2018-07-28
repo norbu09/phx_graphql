@@ -50,6 +50,8 @@ defmodule PhxGraphqlWeb.Router do
     get("/", AppController, :index)
     get("/profile/edit", AppController, :profile)
     post("/profile/edit", AppController, :profile)
+    post("/profile/add_token", AppController, :add_token)
+    post("/profile/del_token/:token", AppController, :del_token)
 
     get("/*path", AppController, :unauthenticated)
   end
