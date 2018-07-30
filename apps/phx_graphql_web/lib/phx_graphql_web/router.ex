@@ -63,8 +63,9 @@ defmodule PhxGraphqlWeb.Router do
 
   def ensure_authenticated(conn, _) do
     case get_session(conn, :current_user) do
-      %PhxGraphql.Users.User{username: _user} -> 
+      %PhxGraphql.Users.User{username: _user} ->
         conn
+
       _ ->
         conn |> put_flash(:error, "You must be logged in") |> redirect(to: "/")
     end
