@@ -1,0 +1,29 @@
+name:         phx_graphql
+origin:       kittyfromouterspace/phx_graphql
+comment:      Provide some PhxGraphql to the world
+arch:         freebsd:11:x86:64
+www:          https://github.com/kittyfromouterspace/phx_graphql
+maintainer:   mail@norbu09.org
+prefix:       /usr/local
+licenselogic: single
+licenses:     [MIT]
+categories:   [phx_graphql]
+deps:         {erlang: {origin: lang/erlang, version: "20"}}
+flatsize:     0
+desc:         <<EOD
+This is PhxGraphql
+EOD
+
+message:      <<EOM
+Ensure that you have the following config files in place:
+
+# /etc/rc.conf.d/phx_graphql
+phx_graphql_enable="YES"
+phx_graphql_verbose="NO"
+phx_graphql_user="www"
+phx_graphql_cookie="........"
+
+# /usr/local/etc/phx_graphql/vm.args
+# /usr/local/etc/phx_graphql/sys.config
+EOM
+
