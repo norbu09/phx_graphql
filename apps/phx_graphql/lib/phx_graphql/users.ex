@@ -12,31 +12,12 @@ defmodule PhxGraphql.User do
       {:ok, user} ->
         case Pbkdf2.verify_pass(pass, user["password"]) do
           true -> {:ok, User.new(user)}
-          _ -> {:error, :invalid_auth}
+          _ -> {:error, :authentication_error}
         end
 
       _ ->
         Pbkdf2.no_user_verify()
-        {:error, :invalid_auth}
-    end
-  end
-
-  def validate_password(_) do
-    Pbkdf2.no_user_verify()
-    {:error, :invalid_credentials}
-  end
-
-  @spec validate_token(binary()) :: {:ok, %User{}} | {:error, atom()}
-  def validate_token(token) do
-    case Couchex.Client.get(@db, %{view: "user/by_token"}, %{
-           "key" => token,
-           "include_docs" => true
-         }) do
-      {:ok, [%{"doc" => %{"_id" => _id} = user}]} ->
-        {:ok, User.new(user)}
-
-      _ ->
-        {:error, :invalid_token}
+        {:error, :authentication_error}
     end
   end
 
@@ -47,11 +28,6 @@ defmodule PhxGraphql.User do
         }) :: {:ok, %User{}} | {:error, atom()}
   def create(user) do
     create_user(user)
-  end
-
-  @spec now() :: integer()
-  def now do
-    DateTime.to_unix(DateTime.utc_now())
   end
 
   @spec update(%User{}, %User{}) :: {:ok, %User{}} | {:error, atom()}
@@ -147,6 +123,26 @@ defmodule PhxGraphql.User do
     end
   end
 
+  @spec validate_token(binary()) :: {:ok, %User{}} | {:error, atom()}
+  def validate_token(token) do
+    case Couchex.Client.get(@db, %{view: "user/by_token"}, %{
+           "key" => token,
+           "include_docs" => true
+         }) do
+      {:ok, [%{"doc" => %{"_id" => _id} = user}]} ->
+        {:ok, User.new(user)}
+
+      _ ->
+        {:error, :authentication_error}
+    end
+  end
+
+  # misc helper functions
+  @spec now() :: integer()
+  def now do
+    DateTime.to_unix(DateTime.utc_now())
+  end
+
   #### internal functions
 
   defp update_token(user, token) do
@@ -177,7 +173,11 @@ defmodule PhxGraphql.User do
 
         case Couchex.Client.put(@db, user1) do
           {:ok, insert} ->
-            u2 = Map.put(user1, "_id", insert["id"])
+            u2 =
+              user1
+              |> Map.put("_id", insert["id"])
+              |> Map.put("_rev", insert["rev"])
+
             {:ok, User.new(u2)}
 
           error ->
@@ -247,7 +247,10 @@ defmodule PhxGraphql.User do
 
   defp generate_token(len) do
     token = random_str(len)
-    # TODO: call validate_token(token) to check for collisions
-    [%{token: token, created: now()}]
+
+    case validate_token(token) do
+      {:ok, _} -> generate_token(len)
+      _ -> [%{token: token, created: now()}]
+    end
   end
 end
