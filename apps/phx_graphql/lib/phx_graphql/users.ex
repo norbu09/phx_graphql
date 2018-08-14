@@ -1,7 +1,7 @@
 defmodule PhxGraphql.User do
   require Logger
-  alias PhxGraphql.Users.User
-  alias PhxGraphql.Users.Token
+  alias PhxGraphql.Types.User
+  alias PhxGraphql.Types.Token
 
   @db Application.get_env(:couchex, :db)
 

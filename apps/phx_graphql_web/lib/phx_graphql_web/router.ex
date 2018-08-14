@@ -40,8 +40,13 @@ defmodule PhxGraphqlWeb.Router do
   scope "/api" do
     pipe_through(:api)
 
-    forward("/graphiql", Absinthe.Plug.GraphiQL, schema: PhxGraphqlWeb.Schema)
     forward("/", Absinthe.Plug, schema: PhxGraphqlWeb.Schema)
+  end
+
+  scope "/graphiql" do
+    pipe_through(:api)
+
+    forward("/", Absinthe.Plug.GraphiQL, schema: PhxGraphqlWeb.Schema)
   end
 
   scope "/app", PhxGraphqlWeb do
@@ -63,7 +68,7 @@ defmodule PhxGraphqlWeb.Router do
 
   def ensure_authenticated(conn, _) do
     case get_session(conn, :current_user) do
-      %PhxGraphql.Users.User{username: _user} ->
+      %PhxGraphql.Types.User{username: _user} ->
         conn
 
       _ ->

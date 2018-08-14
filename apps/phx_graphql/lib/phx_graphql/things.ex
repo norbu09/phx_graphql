@@ -3,8 +3,8 @@ defmodule PhxGraphql.Things do
   The Things context.
   """
 
-  alias PhxGraphql.Things.Thing
-  alias PhxGraphql.Users.User
+  alias PhxGraphql.Types.Thing
+  alias PhxGraphql.Types.User
   require Logger
   @db Application.get_env(:couchex, :db)
 

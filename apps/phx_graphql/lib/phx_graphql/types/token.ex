@@ -1,4 +1,4 @@
-defmodule PhxGraphql.Users.Token do
+defmodule PhxGraphql.Types.Token do
   require Logger
 
   @record [:token, :created]

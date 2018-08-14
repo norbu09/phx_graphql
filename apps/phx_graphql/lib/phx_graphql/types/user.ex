@@ -1,4 +1,4 @@
-defmodule PhxGraphql.Users.User do
+defmodule PhxGraphql.Types.User do
   require Logger
 
   @db Application.get_env(:couchex, :db)

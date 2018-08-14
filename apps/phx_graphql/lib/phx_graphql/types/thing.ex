@@ -1,4 +1,4 @@
-defmodule PhxGraphql.Things.Thing do
+defmodule PhxGraphql.Types.Thing do
   require Logger
 
   @record [:id, :version, :description, :user]
