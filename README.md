@@ -12,5 +12,8 @@ This starter includes the following bits, already configured and ready to go:
   get utomatically updated in CouchDB on application start
 - Apsinthe for your GraphQL needs. Documentation is under https://hexdocs.pm/absinthe
 - `comeonin` for authentication handling backed into CouchDB
+- `guardian` for JWT handling
+- `create-react-app` for a React frontend sitting on top of Phoenix
+- Apollo for GraphQL handling within the React app
 - Distillery for release bundling. Documentation is under https://hexdocs.pm/distillery/getting-started.html
 - `dyalixer` for type checking
