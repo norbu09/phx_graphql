@@ -17,6 +17,7 @@ defmodule PhxGraphqlWeb.Router do
 
   pipeline :app do
     plug(:ensure_authenticated)
+    plug(PhxGraphqlWeb.Guardian.AuthPipeline)
   end
 
   scope "/", PhxGraphqlWeb do

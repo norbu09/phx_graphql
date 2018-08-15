@@ -3,6 +3,9 @@ defmodule PhxGraphqlWeb.PageController do
   require Logger
   alias PhxGraphql.User
   alias PhxGraphqlWeb.Session
+  alias PhxGraphqlWeb.Guardian
+
+  @claims %{typ: "access"}
 
   def index(conn, _params) do
     conn
@@ -15,6 +18,7 @@ defmodule PhxGraphqlWeb.PageController do
       {:ok, user} ->
         conn
         |> put_session(:current_user, user)
+        |> Guardian.Plug.sign_in(user, @claims)
         |> put_layout("page.html")
         |> redirect(to: "/app")
 
@@ -59,6 +63,7 @@ defmodule PhxGraphqlWeb.PageController do
           {:ok, user} ->
             conn
             |> put_session(:current_user, user)
+            |> Guardian.Plug.sign_in(user, @claims)
             |> redirect(to: "/app")
 
           {:error, _error} ->

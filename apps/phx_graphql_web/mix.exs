@@ -24,7 +24,14 @@ defmodule PhxGraphqlWeb.Mixfile do
   def application do
     [
       mod: {PhxGraphqlWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools, :absinthe_plug]
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :absinthe_plug,
+        :comeonin,
+        :pbkdf2_elixir,
+        :guardian
+      ]
     ]
   end
 
@@ -50,7 +57,8 @@ defmodule PhxGraphqlWeb.Mixfile do
 
       # Auth
       {:comeonin, ">= 3.0.1"},
-      {:pbkdf2_elixir, ">= 0.12.0"}
+      {:pbkdf2_elixir, ">= 0.12.0"},
+      {:guardian, ">= 1.0.0"}
     ]
   end
 

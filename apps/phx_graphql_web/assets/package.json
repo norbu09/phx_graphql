@@ -1,18 +1,25 @@
 {
-  "repository": {},
-  "license": "MIT",
-  "scripts": {
-    "deploy": "brunch build --production",
-    "watch": "brunch watch --stdin"
-  },
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "phoenix": "file:../../../deps/phoenix",
-    "phoenix_html": "file:../../../deps/phoenix_html"
+    "apollo-boost": "^0.1.13",
+    "apollo-link-context": "^1.0.8",
+    "apollo-link-http": "^1.5.4",
+    "graphql": "^0.13.2",
+    "react": "^16.4.2",
+    "react-apollo": "^2.1.11",
+    "react-dom": "^16.4.2",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "watch": "cra-build-watch -b ../priv/static -p /dashboard -v",
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "babel-brunch": "6.1.1",
-    "brunch": "2.10.9",
-    "clean-css-brunch": "2.10.0",
-    "uglify-js-brunch": "2.10.0"
+    "cra-build-watch": "^1.0.3"
   }
 }

@@ -3,11 +3,21 @@ defmodule PhxGraphqlWeb.Context do
 
   import Plug.Conn
   alias PhxGraphqlWeb.Session
+  alias PhxGraphqlWeb.Guardian
+  alias PhxGraphql.Types.User
 
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
+    context =
+      case Guardian.Plug.current_resource(conn) do
+        %User{} = user ->
+          %{current_user: user}
+
+        _ ->
+          build_context(conn)
+      end
+
     Absinthe.Plug.put_options(conn, context: context)
   end
 
@@ -16,10 +26,23 @@ defmodule PhxGraphqlWeb.Context do
   """
   def build_context(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {:ok, current_user} <- Session.authorize(String.trim(token)) do
+         {:ok, current_user} <- parse_token(String.trim(token)) do
       %{current_user: current_user}
     else
       _ -> %{}
+    end
+  end
+
+  defp parse_token(token) do
+    case Guardian.resource_from_token(token) do
+      {:ok, user, _claims} ->
+        {:ok, user}
+
+      _ ->
+        case Session.authorize(token) do
+          {:ok, user} -> {:ok, user}
+          _ -> {:error, :not_found}
+        end
     end
   end
 end

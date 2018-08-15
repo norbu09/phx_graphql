@@ -3,9 +3,14 @@ defmodule PhxGraphqlWeb.AppController do
   require Logger
 
   def index(conn, _params) do
+    props = %{
+      token: Guardian.Plug.current_token(conn),
+      user: get_session(conn, :current_user)
+    }
+
     conn
     |> put_layout("app.html")
-    |> render("index.html", user: get_session(conn, :current_user))
+    |> render("index.html", props: props)
   end
 
   def profile(conn, %{"current_password" => curr_pass, "new_password" => new_pass}) do

@@ -30,6 +30,18 @@ defmodule PhxGraphql.User do
     create_user(user)
   end
 
+  @spec get_user(id :: binary()) :: {:ok, %User{}} | {:error, atom()}
+  def get_user(id) do
+    case Couchex.Client.get(@db, id) do
+      {:ok, user} ->
+        {:ok, User.new(user)}
+
+      error ->
+        Logger.error("Could not find user: #{inspect(error)}")
+        error
+    end
+  end
+
   @spec update(%User{}, %User{}) :: {:ok, %User{}} | {:error, atom()}
   def update(user, update) do
     case user.id == update.id do
@@ -108,7 +120,7 @@ defmodule PhxGraphql.User do
     token_user =
       case validate_token(token) do
         {:ok, user} -> user
-        _ -> PhxGraphql.Users.User.new(%{})
+        _ -> User.new(%{})
       end
 
     case user.id == token_user.id do
