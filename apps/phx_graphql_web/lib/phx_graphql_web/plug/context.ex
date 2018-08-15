@@ -8,7 +8,8 @@ defmodule PhxGraphqlWeb.Context do
 
   def init(opts), do: opts
 
-  def call(conn, _) do
+  @spec call(Plug.Conn.t, map) :: Plug.Conn.t | no_return
+  def call(conn, _config) do
     context =
       case Guardian.Plug.current_resource(conn) do
         %User{} = user ->
