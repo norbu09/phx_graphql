@@ -24,7 +24,7 @@ defmodule PhxGraphql.Umbrella.Mixfile do
   defp deps do
     [
       {:dialyxir, ">= 0.4.0", only: [:dev], runtime: false},
-      {:distillery, "~> 1.5", runtime: false}
+      {:distillery, "~> 2.0", runtime: false}
     ]
   end
 end
