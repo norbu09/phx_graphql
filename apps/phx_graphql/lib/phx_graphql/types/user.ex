@@ -17,7 +17,7 @@ defmodule PhxGraphql.Types.User do
       |> Map.put("id", map["_id"])
       |> Map.put("version", map["_rev"])
 
-    rec = Enum.reduce(@record, %{}, fn x, y -> Map.put(y, x, m2[Atom.to_string(x)]) end)
+    rec = Enum.reduce(@record, %{}, fn x, y -> Map.put(y, x, m2[x] || m2[Atom.to_string(x)]) end)
     struct(%__MODULE__{}, rec)
   end
 
@@ -25,13 +25,21 @@ defmodule PhxGraphql.Types.User do
     case Couchex.Client.get(@db, user.id) do
       {:ok, doc} ->
         upd =
-          Enum.reduce(@record, doc, fn x, y -> Map.put(y, Atom.to_string(x), user[x]) end)
+          Enum.reduce(@record, doc, fn x, y ->
+            Map.put(y, Atom.to_string(x), user[x] || doc[Atom.to_string(x)])
+          end)
           |> Map.put("_id", user.id)
           |> Map.put("_rev", user.version)
           |> Map.delete("id")
           |> Map.delete("version")
 
-        Couchex.Client.put(@db, upd)
+        case Couchex.Client.put(@db, upd) do
+          {:ok, insert} ->
+            {:ok, %{new(upd) | id: insert["id"], version: insert["rev"]}}
+
+          error ->
+            error
+        end
 
       _ ->
         {:error, :authentication_error}

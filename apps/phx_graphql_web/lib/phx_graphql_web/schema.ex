@@ -1,6 +1,7 @@
 defmodule PhxGraphqlWeb.Schema do
   use Absinthe.Schema
   alias PhxGraphqlWeb.ThingResolver
+  alias PhxGraphqlWeb.ProfileResolver
 
   object :thing do
     field(:id, non_null(:id))
@@ -8,7 +9,37 @@ defmodule PhxGraphqlWeb.Schema do
     field(:version, :string)
   end
 
+  object :profile do
+    field(:id, non_null(:id))
+    field(:version, non_null(:string))
+    field(:username, non_null(:string))
+    field(:company, :string)
+  end
+
+  object :token do
+    field(:token, non_null(:id))
+    field(:created, non_null(:integer))
+  end
+
+  input_object :profile_input do
+    field(:id, non_null(:id))
+    field(:version, non_null(:string))
+    field(:username, :string)
+    field(:company, :string)
+  end
+
   query do
+    @desc "Get a user profile"
+    field :get_profile, non_null(:profile) do
+      arg(:id, :id)
+      resolve(&ProfileResolver.get_profile/3)
+    end
+
+    @desc "Get all user token"
+    field :all_token, list_of(:token) do
+      resolve(&ProfileResolver.get_token/3)
+    end
+
     @desc "Get all things"
     field :all_things, non_null(list_of(non_null(:thing))) do
       resolve(&ThingResolver.all_things/3)
@@ -27,6 +58,30 @@ defmodule PhxGraphqlWeb.Schema do
   end
 
   mutation do
+    @desc "Update a user profile"
+    field :update_profile, non_null(:profile) do
+      arg(:profile, non_null(:profile_input))
+      resolve(&ProfileResolver.upd_profile/3)
+    end
+
+    @desc "Update a user password"
+    field :update_password, non_null(:profile) do
+      arg(:current_password, non_null(:string))
+      arg(:new_password, non_null(:string))
+      resolve(&ProfileResolver.upd_passwd/3)
+    end
+
+    @desc "Create an API token for a user"
+    field :create_token, list_of(:token) do
+      resolve(&ProfileResolver.add_token/3)
+    end
+
+    @desc "Delete an API token for a user"
+    field :delete_token, list_of(:token) do
+      arg(:token, non_null(:string))
+      resolve(&ProfileResolver.del_token/3)
+    end
+
     @desc "Create a things"
     field :create_thing, :thing do
       arg(:description, non_null(:string))

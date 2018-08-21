@@ -7,8 +7,8 @@ defmodule PhxGraphql.User do
 
   # user functions ###
   @spec validate_password(binary(), binary()) :: {:ok, %User{}} | {:error, atom()}
-  def validate_password(user_id, pass) do
-    case get_user_with_pw(user_id) do
+  def validate_password(username, pass) do
+    case get_user_with_pw(username) do
       {:ok, user} ->
         case Pbkdf2.verify_pass(pass, user["password"]) do
           true -> {:ok, User.new(user)}
@@ -19,15 +19,6 @@ defmodule PhxGraphql.User do
         Pbkdf2.no_user_verify()
         {:error, :authentication_error}
     end
-  end
-
-  @spec create(%{
-          required(:username) => binary(),
-          required(:password) => binary(),
-          optional(any) => any
-        }) :: {:ok, %User{}} | {:error, atom()}
-  def create(user) do
-    create_user(user)
   end
 
   @spec get_user(id :: binary()) :: {:ok, %User{}} | {:error, atom()}
@@ -42,21 +33,20 @@ defmodule PhxGraphql.User do
     end
   end
 
+  @spec create(%{
+          required(:username) => binary(),
+          required(:password) => binary(),
+          optional(any) => any
+        }) :: {:ok, %User{}} | {:error, atom()}
+  def create(user) do
+    create_user(user)
+  end
+
   @spec update(%User{}, %User{}) :: {:ok, %User{}} | {:error, atom()}
   def update(user, update) do
     case user.id == update.id do
       true ->
-        case User.update(update) do
-          {:ok, _upd} ->
-            {:ok, update}
-
-          error ->
-            Logger.error(
-              "Update failed: #{inspect(user)} -> #{inspect(update)}: #{inspect(error)}"
-            )
-
-            {:error, :update_failed}
-        end
+        User.update(update)
 
       false ->
         {:error, :authentication_error}
