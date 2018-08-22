@@ -31,7 +31,9 @@ defmodule PhxGraphqlWeb.ProfileResolver do
     {:error, "Not Authorized"}
   end
 
-  def upd_passwd(_root, %{current_password: curr_pass, new_password: new_pass}, %{ context: %{current_user: user} }) do
+  def upd_passwd(_root, %{current_password: curr_pass, new_password: new_pass}, %{
+        context: %{current_user: user}
+      }) do
     User.pw_update(user, curr_pass, new_pass)
   end
 

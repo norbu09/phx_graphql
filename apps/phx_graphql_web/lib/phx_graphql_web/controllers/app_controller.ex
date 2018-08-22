@@ -14,5 +14,4 @@ defmodule PhxGraphqlWeb.AppController do
     |> put_layout("app.html")
     |> render("index.html", props: props)
   end
-
 end

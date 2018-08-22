@@ -49,11 +49,11 @@ defmodule PhxGraphqlWeb.Mixfile do
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
-      {:phx_graphql, in_umbrella: true},
       {:cowboy, "~> 1.0"},
 
       # API
       {:absinthe_plug, ">= 1.3.0"},
+      {:phx_graphql, in_umbrella: true},
 
       # Auth
       {:comeonin, ">= 3.0.1"},
