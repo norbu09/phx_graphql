@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ProfileUpdate from "./profile/update"
 import PasswordUpdate from "./profile/password"
 import Token from "./profile/token"
+import ActivityFeed from "./notify"
 
 class Profile extends Component {
   render() {
@@ -20,6 +21,9 @@ class Profile extends Component {
           <h2 className="f4 measure">API token</h2>
           <Token />
         </article>
+		<article className="fl w-50 pa4 black-80">
+		  <ActivityFeed />
+		</article>
       </div>
     );
   }

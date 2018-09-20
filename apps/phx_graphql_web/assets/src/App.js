@@ -4,28 +4,20 @@ import Dashboard from "./dashboard";
 import Profile from "./profile";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-
-const httpLink = createHttpLink({
-  uri: "/api"
-});
+import * as AbsintheSocket from '@absinthe/socket';
+import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
+import { Socket as PhoenixSocket } from 'phoenix';
 
 const token = window.__INITIAL_STATE__.token;
 const base = window.__INITIAL_STATE__.base;
-const authLink = setContext((_, { headers }) => {
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    }
-  }
-});
-
+const websock = window.__INITIAL_STATE__.websocket;
+const link = createAbsintheSocketLink(AbsintheSocket.create(
+// TODO: add the actual socket based on phoenix config variables and initial state values
+ new PhoenixSocket(websock + '?vsn=1.0.0', { params: { token: token} }),
+));
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: link,
   cache: new InMemoryCache()
 });
 

@@ -28,6 +28,7 @@ defmodule PhxGraphqlWeb.Mixfile do
         :logger,
         :runtime_tools,
         :absinthe_plug,
+        :absinthe_phoenix,
         :comeonin,
         :pbkdf2_elixir,
         :guardian
@@ -53,6 +54,7 @@ defmodule PhxGraphqlWeb.Mixfile do
 
       # API
       {:absinthe_plug, ">= 1.3.0"},
+      {:absinthe_phoenix, ">= 1.4.0"},
       {:phx_graphql, in_umbrella: true},
 
       # Auth

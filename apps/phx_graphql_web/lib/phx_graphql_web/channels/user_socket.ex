@@ -1,5 +1,8 @@
 defmodule PhxGraphqlWeb.UserSocket do
   use Phoenix.Socket
+  use Absinthe.Phoenix.Socket, schema: PhxGraphqlWeb.Schema
+  require Logger
+  alias PhxGraphqlWeb.Session
 
   ## Channels
   # channel "room:*", PhxGraphqlWeb.RoomChannel
@@ -19,7 +22,15 @@ defmodule PhxGraphqlWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
+  def connect(params, socket) do
+    context = parse_token(params)
+
+    socket =
+      Absinthe.Phoenix.Socket.put_options(
+        socket,
+        context: context
+      )
+
     {:ok, socket}
   end
 
@@ -34,4 +45,14 @@ defmodule PhxGraphqlWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   def id(_socket), do: nil
+
+  defp parse_token(%{"token" => token}) do
+    case Session.parse_token(String.trim(token)) do
+      {:ok, user} ->
+        %{current_user: user}
+
+      _ ->
+        %{}
+    end
+  end
 end

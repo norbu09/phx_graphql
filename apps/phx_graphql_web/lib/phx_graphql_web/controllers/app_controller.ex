@@ -4,10 +4,17 @@ defmodule PhxGraphqlWeb.AppController do
   require Logger
 
   def index(conn, _params) do
+    url =
+      case PhxGraphqlWeb.Endpoint.url() do
+        "http:" <> rest -> "ws:" <> rest
+        "https:" <> rest -> "wss:" <> rest
+      end
+
     props = %{
       token: Guardian.Plug.current_token(conn),
       user: get_session(conn, :current_user),
-      base: app_path(conn, :index)
+      base: app_path(conn, :index),
+      websocket: "#{url}/socket/websocket"
     }
 
     conn

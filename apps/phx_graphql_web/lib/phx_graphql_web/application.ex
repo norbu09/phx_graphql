@@ -7,7 +7,8 @@ defmodule PhxGraphqlWeb.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(PhxGraphqlWeb.Endpoint, [])
+      supervisor(PhxGraphqlWeb.Endpoint, []),
+      supervisor(Absinthe.Subscription, [PhxGraphqlWeb.Endpoint])
       # Start your own worker by calling: PhxGraphqlWeb.Worker.start_link(arg1, arg2, arg3)
       # worker(PhxGraphqlWeb.Worker, [arg1, arg2, arg3]),
     ]

@@ -1,5 +1,6 @@
 defmodule PhxGraphqlWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :phx_graphql_web
+  use Absinthe.Phoenix.Endpoint
 
   socket("/socket", PhxGraphqlWeb.UserSocket)
 

@@ -1,5 +1,6 @@
 defmodule PhxGraphqlWeb.Schema do
   use Absinthe.Schema
+  require Logger
   alias PhxGraphqlWeb.ThingResolver
   alias PhxGraphqlWeb.ProfileResolver
 
@@ -28,6 +29,11 @@ defmodule PhxGraphqlWeb.Schema do
     field(:company, :string)
   end
 
+  object :activity do
+    field(:user_id, :id)
+    field(:message, :string)
+  end
+
   query do
     @desc "Get a user profile"
     field :get_profile, non_null(:profile) do
@@ -54,6 +60,12 @@ defmodule PhxGraphqlWeb.Schema do
     @desc "Get all user things"
     field :all_user_things, non_null(list_of(non_null(:thing))) do
       resolve(&ThingResolver.user_things/3)
+    end
+
+    @desc "Get a user log entry"
+    field :user_activity, list_of(:activity) do
+      arg(:user_id, :id)
+      resolve(&first_log/3)
     end
   end
 
@@ -96,5 +108,44 @@ defmodule PhxGraphqlWeb.Schema do
 
       resolve(&ThingResolver.delete_thing/3)
     end
+
+    @desc "Create a user log entry"
+    field :log_activity, :activity do
+      arg(:user_id, :id)
+      arg(:message, :string)
+      resolve(&log_acc/3)
+    end
+  end
+
+  subscription do
+    field :user_activity, :activity do
+      arg(:user_id, non_null(:id))
+
+      config(fn args, _ ->
+        Logger.debug("[subscription] args: #{inspect(args)}")
+        {:ok, topic: args.user_id}
+      end)
+
+      trigger(
+        :log_activity,
+        topic: fn log ->
+          log.user_id
+        end
+      )
+
+      resolve(fn log, _, _ ->
+        Logger.debug("[subscription] log: #{inspect(log)}")
+        {:ok, log}
+      end)
+    end
+  end
+
+  defp first_log(_root, params, _) do
+    {:ok, [%{message: "foo", user_id: params[:user_id]}]}
+  end
+
+  defp log_acc(_root, params, _) do
+    Logger.debug("[activity log] #{inspect(params)}")
+    {:ok, %{message: params[:message], user_id: params[:user_id]}}
   end
 end
