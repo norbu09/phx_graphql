@@ -1,5 +1,3 @@
-# ~/.tmuxinator/makemysale.yml
-
 name: phx_graphql
 root: ~/code/phx_graphql
 on_project_start: sudo service couchdb onestart
