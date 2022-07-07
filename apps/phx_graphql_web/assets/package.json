@@ -9,7 +9,7 @@
     "apollo-link-http": "^1.5.4",
     "apollo-link-ws": "^1.0.9",
     "graphql": "^0.13.2",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "phoenix": "^1.3.4",
     "react": "^16.4.2",
     "react-apollo": "^2.1.11",
